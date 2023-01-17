@@ -1,0 +1,83 @@
+version: '3'
+
+services:
+  ambassador:
+    image: datawire/ambassador:1.10.0
+    ports:
+      - 8080:8080
+    volumes:
+      - ./backend/ambassador:/ambassador/ambassador-config
+    environment:
+      - AMBASSADOR_NO_KUBEWATCH=no_kubewatch
+
+  postgres:
+    build: backend/postgres-dev/
+    container_name: postgres
+    ports:
+      - 5432:5432
+    restart: always
+    volumes:
+      - ./backend/db_data/:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: $POSTGRES_PASSWORD
+      POSTGRES_DB_LIST: $POSTGRES_DATABASE_LIST
+      POSTGRES_USER: $POSTGRES_USERNAME
+
+  adminer:
+    image: adminer
+    container_name: adminer
+    restart: always
+    ports:
+      - $MACHINE_ADMINER_PORT:$ADMINER_PORT
+    environment:
+      ADMINER_DEFAULT_SERVER: postgres
+
+  
+ 
+  movies:
+    build: backend/movies/
+    container_name: movies
+    volumes:
+      - ./backend/movies/migrations:/usr/app/migrations/
+    command: sh ./docker-entrypoint.sh
+    hostname: $MOVIES_HOSTNAME
+    restart: always
+    ports:
+      - $MOVIES_PORT:$MOVIES_PORT
+    depends_on:
+      - postgres
+    environment:
+      PORT: $MOVIES_PORT
+      POSTGRES_USERNAME: $POSTGRES_USERNAME
+      POSTGRES_PASSWORD: $POSTGRES_PASSWORD
+      POSTGRES_HOST: postgres
+      POSTGRES_DATABASE: $MOVIES_DB
+      # LOG_LEVEL: silly
+      # NODE_ENV: development
+      # DATABASE_URL: $DATABASE_URL
+     
+
+      
+  genres:
+    build: backend/genres/
+    container_name: genres
+    volumes:
+      - ./backend/genres/migrations:/usr/app/migrations/
+    command: sh ./docker-entrypoint.sh
+    hostname: $GENRES_HOSTNAME
+    restart: always
+    ports:
+      - $GENRES_PORT:$GENRES_PORT
+    depends_on:
+      - postgres
+    environment:
+      PORT: $GENRES_PORT
+      POSTGRES_USERNAME: $POSTGRES_USERNAME
+      POSTGRES_PASSWORD: $POSTGRES_PASSWORD
+      POSTGRES_HOST: postgres
+      POSTGRES_DATABASE: $GENRES_DB
+      # LOG_LEVEL: silly
+      # NODE_ENV: development
+      # DATABASE_URL: $DATABASE_URL
+
+ 

@@ -1,0 +1,37 @@
+---
+apiVersion: getambassador.io/v2
+kind: Module
+name: ambassador
+config:
+  diagnostics:
+    enabled: true
+  cors:
+    origins: "*"
+    methods:
+    - POST
+    - GET
+    - OPTIONS
+    - PATCH
+    - DELETE
+    - PUT
+    headers:
+    - Access-Control-Allow-Origin
+    - Content-Type
+    - Authorization
+    - Sentry-Trace
+    - user
+    exposed_headers: "*"
+    credentials: true
+    # max_age: "86400"
+    # cluster_request_timeout_ms: "120000"
+    
+---
+apiVersion: getambassador.io/v2
+kind: AuthService
+name: sternguard_verify
+auth_service: sternguard:4000
+path_prefix: "/v1/rbac/check"
+allowed_request_headers:
+  -  Origin #sternguard ki trf
+allowed_authorization_headers:
+  - "user" #sternguard se aa raha hai

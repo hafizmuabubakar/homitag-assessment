@@ -1,0 +1,50 @@
+{
+	"name": "movies",
+	"version": "1.0.0",
+	"description": "movies connector",
+	"main": "app.js",
+	"scripts": {
+		"start": "node app.js",
+		"test": "jest --detectOpenHandles --coverage --collectCoverage",
+		"migrate": "knex migrate:latest",
+		"makemigrate": "knex --knexfile=./database/knexfile.js migrate:make",
+		"lint": "eslint '**/*.js'",
+		"refresh-channel-subscriptions": "node jobs/ChannelSubscription.js",
+		"update-delta-users": "node -e 'require(\"./cron_jobs/delta_users.js\").init_cron()'",
+		"update-delta-groups": "node -e 'require(\"./cron_jobs/delta_groups.js\").autoGroupSyncing()'"
+	},
+	"devDependencies": {
+		"eslint": "^7.18.0",
+		"husky": "^4.3.8",
+		"jest": "^26.6.3"
+	},
+	"husky": {
+		"hooks": {
+			"pre-commit": "yarn lint",
+			"pre-push": "yarn lint"
+		}
+	},
+	"author": "",
+	"license": "ISC",
+	"dependencies": {
+		"cors": "^2.8.5",
+		"express": "^4.17.1",
+		"jsonwebtoken": "^8.5.1",
+		"knex": "^0.95.11",
+		"local-storage": "^2.0.0",
+		"objection": "^2.2.17",
+		"pg": "^8.7.1"
+	},
+	"jest": {
+		"coverageThreshold": {
+			"global": {
+				"branches": 0,
+				"functions": 15,
+				"lines": 15
+			}
+		},
+		"collectCoverageFrom": [
+			"**/controllers/*"
+		]
+	}
+}

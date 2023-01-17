@@ -1,0 +1,10 @@
+---
+apiVersion: getambassador.io/v2
+kind: Mapping
+name: movies
+prefix: /v1/movies/
+rewrite: ''
+service: movies:4001
+bypass_auth: true
+timeout_ms: 110000
+
