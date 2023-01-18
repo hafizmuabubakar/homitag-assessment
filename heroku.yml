@@ -7,5 +7,5 @@ build:
   docker:
     web: backend/movies/Dockerfile
 
-run:
-  web: yarn start
+# run:
+#   web: yarn start
